@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy · BLK PHX LABS PH3</title>
+<meta name="theme-color" content="#0a0a09">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+<style>
+@font-face{font-family:'Silkscreen';src:url('/assets/brand/silkscreen-latin-400-normal.woff2') format('woff2');font-display:swap}
+body{margin:0;background:#0a0a09;color:#c8c4bc;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.7}
+main{max-width:640px;margin:0 auto;padding:40px 18px 64px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:32px;font-family:'Silkscreen',ui-monospace,monospace;font-size:13px;letter-spacing:.12em;color:#e8520a;text-decoration:none}
+.brand img{width:32px;height:32px;image-rendering:pixelated}
+h1{font-size:30px;font-weight:400;color:#f0ede8;margin:0 0 6px}
+h2{font-family:'Silkscreen',ui-monospace,monospace;font-size:13px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#e8520a;margin:30px 0 8px}
+p,ul{margin:0 0 12px}
+a{color:#f0ede8}
+.date{color:#948f87;font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<a class="brand" href="/"><img src="/assets/brand/blkphx-mark-8bit.png" width="32" height="32" alt="">BLK PHX LABS</a>
+<h1>PH3 privacy</h1>
+<p class="date">Updated November 4, 2026</p>
+
+<p>PH3 is a personal training log. It has no accounts of its own, no ads and no analytics.</p>
+
+<h2>What it stores</h2>
+<p>Workouts, runs, notes, body measurements and settings are saved in your browser on your device.</p>
+
+<h2>Google data</h2>
+<p>If you connect Google, PH3 asks for permission to read and edit Google Sheets. It uses that permission only to read and write the training log spreadsheet set in the app. It doesn't read other files, use the data for advertising, or sell or transfer it.</p>
+<p>PH3's use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+<h2>Who else handles requests</h2>
+<ul>
+<li>Cloudflare hosts the app and runs a small Worker that passes Google sign-in tokens between your device and Google. The Worker code doesn't save them. Your device keeps them in browser storage.</li>
+<li>jsDelivr serves the charting library, so it receives ordinary web request details such as your IP address.</li>
+<li>Google stores anything synced to your spreadsheet under your Google account.</li>
+</ul>
+
+<h2>Removing your data</h2>
+<p>Disconnect in Settings to remove the sign-in from your device, and revoke access any time in your <a href="https://myaccount.google.com/permissions">Google account permissions</a>. Clear the app's site data to remove what's on your device, and delete rows or the spreadsheet in Google Sheets to remove what's there.</p>
+
+<h2>Contact</h2>
+<p>Open an issue on the <a href="https://github.com/blk-phx-labs/blkphx-ph3/issues">project's GitHub repository</a>.</p>
+</main>
+</body>
+</html>

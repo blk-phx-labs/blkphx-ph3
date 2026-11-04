@@ -24,7 +24,7 @@ jobs:
       - name: Stage app files only
         run: |
           mkdir -p site/assets
-          cp index.html manifest.json sw.js _redirects site/
+          cp index.html privacy.html manifest.json sw.js _redirects site/
           cp -r assets/brand site/assets/
 
       - name: Deploy to Cloudflare Pages
