@@ -23,9 +23,9 @@ Live:  https://blkphx-ph3.pages.dev
 
 | Phase | Status | Notes |
 |---|---|---|
-| 1 — Static PWA | ✅ Live | Deployed to Cloudflare Pages. Last deploy 2026-06-08. The repo has since moved to `blk-phx-labs`, and Cloudflare's GitHub app is not installed on that org (checked 2026-11-04), so a push to `main` is not expected to deploy until the app is reconnected. |
+| 1 — Static PWA | ✅ Live | Every push to `main` deploys through `.github/workflows/deploy.yml` (wrangler, secret `CLOUDFLARE_API_TOKEN`), publishing only `index.html`, `manifest.json`, `sw.js`, `_redirects` and `assets/brand`. Pages' own Git link still names the old `fabzy4L` repo and doesn't work. Cloudflare's docs say a moved repo needs a new project, which would change the URL, so don't recreate it. |
 | 2 — Apps Script | ❌ Obsolete | Code in `scripts/blkphx_apps_script.js` is dead — implementation went straight to OAuth+Sheets API v4. Ignore it. |
-| 3 — Google OAuth + Sheets Sync | ✅ Working | OAuth PKCE flow live. Sheets sync functional. One known issue (see below). |
+| 3 — Google OAuth + Sheets Sync | ✅ Working | OAuth PKCE flow live. The sync rewrite is deployed, and the real Sheet still needs checking after the first open on a connected device. |
 
 ---
 
