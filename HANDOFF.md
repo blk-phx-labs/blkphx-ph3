@@ -80,11 +80,15 @@ blkphx-ph3/
 
 ---
 
-## Session Management
+## Screens
 
-- Pencil and ✕ buttons on each recent session card (Today tab). "Logged · Edit" opens today's session.
-- **CLEAR SESSIONS** in Settings → DATA clears this device only. If Google is connected, the sessions load back on the next sync.
-- **REWRITE SHEET FROM THIS DEVICE** in Settings → Google Sheets Sync removes anything that exists only on the Sheet.
+- **Today** and **Progress** sit in the bottom bar. Settings is behind the gear. Nutrition, Calculator, Science and the full session form open as pages with Back, using browser history.
+- **Today:** ticking a set writes straight to that day's session through `commitDraft()`, and Sheets syncs 1.5 seconds later or when the app is hidden. Unticking the last set removes the session. `S.draft` keeps typed values between opens.
+- **Finish:** a new best only raises the program max through `applyPRs()`, on Finish or once the session's day has passed, so weights don't move mid-workout.
+- **Week strip:** tapping another day previews it read-only. "Make Dx today" moves the start date.
+- **Insights:** `buildInsights()` is plain rules over logged sessions. Today shows the first two and Progress shows all of them.
+- **Session form:** the pencil on a Progress card or the Today link opens it, for full edits and off-plan sessions.
+- **CLEAR SESSIONS** clears this device only, and sessions load back on the next sync. **REWRITE SHEET FROM THIS DEVICE** removes anything that exists only on the Sheet.
 
 ---
 
