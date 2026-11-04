@@ -1,5 +1,5 @@
 # BLK PHX LABS — PH3 Combat Tracker
-## Project Handoff — 2026-06-08
+## Project Handoff — updated 2026-11-04
 
 ---
 
@@ -12,7 +12,7 @@ A PWA training tracker implementing Layne Norton's PH3 13-week powerlifting prog
 ## Repo
 
 ```
-https://github.com/fabzy4L/blkphx-ph3
+https://github.com/blk-phx-labs/blkphx-ph3
 Local: C:\Users\f4l\Documents\GitHub\blkphx-ph3
 Live:  https://blkphx-ph3.pages.dev
 ```
@@ -23,7 +23,7 @@ Live:  https://blkphx-ph3.pages.dev
 
 | Phase | Status | Notes |
 |---|---|---|
-| 1 — Static PWA | ✅ Live | Deployed to Cloudflare Pages. Auto-deploys on push to `main`. |
+| 1 — Static PWA | ✅ Live | Deployed to Cloudflare Pages. Last deploy 2026-06-08. The repo has since moved to `blk-phx-labs`, and Cloudflare's GitHub app is not installed on that org (checked 2026-11-04), so a push to `main` is not expected to deploy until the app is reconnected. |
 | 2 — Apps Script | ❌ Obsolete | Code in `scripts/blkphx_apps_script.js` is dead — implementation went straight to OAuth+Sheets API v4. Ignore it. |
 | 3 — Google OAuth + Sheets Sync | ✅ Working | OAuth PKCE flow live. Sheets sync functional. One known issue (see below). |
 
@@ -33,6 +33,7 @@ Live:  https://blkphx-ph3.pages.dev
 
 | Component | Detail |
 |---|---|
+| Cloudflare account | "Fpalvarez23@gmail.com's Account" (`992d365604439945e980e38b5338b008`). Sign in with fpalvarez23@gmail.com; the GitHub button signs in as fabzy4l@gmail.com, which is not this account. |
 | Frontend | Cloudflare Pages — `https://blkphx-ph3.pages.dev` |
 | OAuth Worker | Cloudflare Worker — `https://blkphx-oauth.fpalvarez23.workers.dev` |
 | Worker secrets | `GOOGLE_CLIENT_SECRET` set via `wrangler secret put` (never in repo) |
@@ -48,15 +49,14 @@ Live:  https://blkphx-ph3.pages.dev
 blkphx-ph3/
 ├── index.html                          ← Full app (single file)
 ├── manifest.json                       ← PWA manifest
-├── sw.js                               ← Service worker (cache-first)
+├── sw.js                               ← Service worker (pages network-first, other files cache-first)
 ├── _redirects                          ← Cloudflare Pages SPA routing (/* → index.html)
 ├── workers/
 │   └── oauth-proxy/
 │       ├── index.js                    ← Worker: /token and /refresh endpoints
 │       └── wrangler.toml               ← Worker config (GOOGLE_CLIENT_ID as var)
 ├── assets/
-│   ├── icon-192.png / icon-512.png     ← PWA icons
-│   └── phoenix.svg                     ← Header brand mark
+│   └── brand/                          ← Logo, icons and fonts copied from blk-phx-labs.github.io/assets
 ├── scripts/
 │   └── blkphx_apps_script.js           ← DEAD CODE — ignore
 └── docs/
@@ -68,33 +68,23 @@ blkphx-ph3/
 
 ---
 
-## Known Issue — Sheets Column Inconsistency
+## Google Sheets layout
 
-**Symptom:** When bulk-syncing multiple sessions, data appears in inconsistent columns across rows.
+`Sessions`, `Lifts`, `Stats` and `_data` all have a header in row 1. `_data` holds one JSON row per session and is what the app reads back. `Sessions` and `Lifts` are flat views of it, rewritten whole at fixed ranges on every change.
 
-**Root cause (suspected):** `syncSessionToSheets` computes `cd` (PH3 day), `block`, and `week` from `curDay()` at sync time, not from the session's actual date. Bulk-syncing historical sessions all get today's day number stamped on them. This produces wrong values but shouldn't shift columns — structural cause not yet confirmed.
-
-**Next debug step:**
-1. Settings → DATA → **CLEAR SESSIONS**
-2. Settings → Google Sheets Sync → **RESET SHEET DATA**
-3. Log ONE clean session
-4. Check if that single row's columns align with the header in the Sessions tab
-5. If aligned → bulk sync logic is the issue; fix `curDay()` call to derive day from `session.date`
-6. If misaligned → something structural in `_sheetsAppend` or the API call
-
-**The fix (if step 5):** In `syncSessionToSheets`, replace:
-```js
-const cd=curDay(), block=..., week=...;
-```
-with a version that derives day from `session.date` and `S.startDate`, not the current moment.
+- Don't use `values:append`. It guesses a table from blank cells and stair-stepped `Sessions` 13 columns to the right on each save.
+- Each session stores its own PH3 day and body profile at save time, so old rows don't change when settings do.
+- `Est. Total` and `Est. Wilks` come from that session's estimated squat, bench and deadlift, and stay blank unless all three were logged. The program 1RM total lives on `Stats`.
+- Edits keep the session ID. The newest `updatedAt` wins across devices. A delete stays in `_data` as `{id, deleted, updatedAt}` so other devices drop it too.
+- Hand edits to `Sessions` or `Lifts` are overwritten on the next sync. Edit in the app.
 
 ---
 
-## Session Management (added this session)
+## Session Management
 
-- ✕ delete button on each recent session card (Today tab)
-- **CLEAR SESSIONS** button in Settings → DATA (localStorage only, doesn't touch sheet)
-- **RESET SHEET DATA** button in Settings → Google Sheets Sync (clears Sessions/Lifts/Stats/_data rows, then bulk re-syncs)
+- Pencil and ✕ buttons on each recent session card (Today tab). "Logged · Edit" opens today's session.
+- **CLEAR SESSIONS** in Settings → DATA clears this device only. If Google is connected, the sessions load back on the next sync.
+- **REWRITE SHEET FROM THIS DEVICE** in Settings → Google Sheets Sync removes anything that exists only on the Sheet.
 
 ---
 
@@ -109,7 +99,10 @@ with a version that derives day from `session.date` and `S.startDate`, not the c
 | Chart.js | Pinned to `4.4.0` via CDN — do not bump without testing |
 | AUTOREG tables | In `index.html` as `const AR={...}` — treat as constants |
 | Athlete defaults | 175lb / 11.5% BF / SQ 320 / BN 260 / DL 420 |
-| Program start | Set via Settings → Program Start Date — drives `curDay()` |
+| Program start | Set via Settings → Program Start Date — drives `curDay()`. Tapping a day or saving Current Day moves the start date so today becomes that day. |
+| Dates | Use `localISO()` for calendar dates. `toISOString()` is UTC and rolls to tomorrow in the US evening. |
+| Theme | Matches blkphxlabs.com: 8-bit phoenix mark, `#e8520a` on `#0a0a09`, Silkscreen and Press Start 2P for labels and numbers, Georgia for names and reading text. Tokens live on `:root` in `index.html`; charts read them through `T()` and `tA()`. Orange = primary and squat, blue = run and bench, amber = AMRAP/PR and deadlift, green = success, red = danger. |
+| Service worker | Bump `CACHE_NAME` in `sw.js` when the shell changes. Pages load network first, other files cache first. |
 | Const ordering bug (fixed) | OAuth constants were declared after the init block that called them — caused `ReferenceError`. Fixed by moving init block below constants. |
 
 ---

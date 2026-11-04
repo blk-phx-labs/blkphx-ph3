@@ -2,14 +2,14 @@
   "name": "BLK PHX LABS — PH3",
   "short_name": "BLK PHX",
   "description": "Science-backed PH3 combat training tracker",
-  "theme_color": "#060608",
-  "background_color": "#060608",
+  "theme_color": "#0a0a09",
+  "background_color": "#0a0a09",
   "display": "standalone",
   "orientation": "portrait-primary",
   "start_url": "/",
   "scope": "/",
   "icons": [
-    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/assets/brand/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/brand/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
