@@ -1,5 +1,5 @@
 # BLK PHX LABS — PH3 Combat Tracker
-## Project Handoff — updated 2026-11-04
+## Project Handoff — updated 2026-11-19
 
 ---
 
@@ -23,7 +23,7 @@ Live:  https://blkphx-ph3.pages.dev
 
 | Phase | Status | Notes |
 |---|---|---|
-| 1 — Static PWA | ✅ Live | Every push to `main` deploys through `.github/workflows/deploy.yml` (wrangler, secret `CLOUDFLARE_API_TOKEN`), publishing only `index.html`, `manifest.json`, `sw.js`, `_redirects` and `assets/brand`. Pages' own Git link still names the old `fabzy4L` repo and doesn't work. Cloudflare's docs say a moved repo needs a new project, which would change the URL, so don't recreate it. |
+| 1 — Static PWA | ✅ Live | Every push to `main` deploys through `.github/workflows/deploy.yml` (wrangler, secret `CLOUDFLARE_API_TOKEN`), publishing only `index.html`, `privacy.html`, `manifest.json`, `sw.js`, `_redirects` and `assets/brand`. Pages' own Git link still names the old `fabzy4L` repo and doesn't work. Cloudflare's docs say a moved repo needs a new project, which would change the URL, so don't recreate it. |
 | 2 — Apps Script | ❌ Obsolete | Code in `scripts/blkphx_apps_script.js` is dead — implementation went straight to OAuth+Sheets API v4. Ignore it. |
 | 3 — Google OAuth + Sheets Sync | ✅ Working | OAuth PKCE flow live. The sync rewrite is deployed, and the real Sheet still needs checking after the first open on a connected device. |
 
@@ -40,6 +40,7 @@ Live:  https://blkphx-ph3.pages.dev
 | Worker vars | `GOOGLE_CLIENT_ID` in `workers/oauth-proxy/wrangler.toml` |
 | GCP credentials | OAuth 2.0 client — authorized origin + redirect URI registered for `blkphx-ph3.pages.dev` |
 | Google Sheet | `https://docs.google.com/spreadsheets/d/1Ehktj8QPGImsijTPnf5piutbd6G_B-PzaEB2wI1AwQg` |
+| Google project | `blkphx-ph3`, In production and unverified, so expect the warning screen. The Branding page still has the old phoenix logo; Google lists a logo among the things that need verification. Its privacy link points at `/privacy`, served from `privacy.html`, so keep that file and route. |
 
 ---
 
@@ -77,6 +78,8 @@ blkphx-ph3/
 - `Est. Total` and `Est. Wilks` come from that session's estimated squat, bench and deadlift, and stay blank unless all three were logged. The program 1RM total lives on `Stats`.
 - Edits keep the session ID. The newest `updatedAt` wins across devices. A delete stays in `_data` as `{id, deleted, updatedAt}` so other devices drop it too.
 - Hand edits to `Sessions` or `Lifts` are overwritten on the next sync. Edit in the app.
+- `values:batchClear` leaves number formats behind. That is how Bench once showed as `1900-09-03`. Clear formats too when wiping a range.
+- The Sheet was cleared on 2026-11-04. `_data` holds three delete markers (IDs 1781082048157, 1781082149803, 1793824841259). Leave them until every phone has synced, or the old sessions can come back.
 
 ---
 
@@ -106,7 +109,7 @@ blkphx-ph3/
 | Program start | Set via Settings → Program Start Date — drives `curDay()`. Tapping a day or saving Current Day moves the start date so today becomes that day. |
 | Dates | Use `localISO()` for calendar dates. `toISOString()` is UTC and rolls to tomorrow in the US evening. |
 | Theme | Matches blkphxlabs.com: 8-bit phoenix mark, `#e8520a` on `#0a0a09`, Silkscreen and Press Start 2P for labels and numbers, Georgia for names and reading text. Tokens live on `:root` in `index.html`; charts read them through `T()` and `tA()`. Orange = primary and squat, blue = run and bench, amber = AMRAP/PR and deadlift, green = success, red = danger. |
-| Service worker | Bump `CACHE_NAME` in `sw.js` when the shell changes. Pages load network first, other files cache first. |
+| Service worker | Bump `CACHE_NAME` in `sw.js` when the shell changes. Pages load network first, other files cache first. When previewing locally, clear the service worker and HTTP cache between edits or it serves old code; production headers don't have this problem. |
 | Const ordering bug (fixed) | OAuth constants were declared after the init block that called them — caused `ReferenceError`. Fixed by moving init block below constants. |
 
 ---
